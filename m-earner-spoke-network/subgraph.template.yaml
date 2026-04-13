@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: MToken
-    network: linea
+    network: {{network}}
     source:
       abi: MToken
-      address: '0x866A2BF4E572CbcF37D5071A7a58503Bfb36be1b'
-      startBlock: 21511394
+      address: "0x866A2BF4E572CbcF37D5071A7a58503Bfb36be1b"
+      startBlock: {{mTokenStartBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9
@@ -46,11 +46,11 @@ dataSources:
       file: ./src/m-token.ts
   - kind: ethereum
     name: Stablecoin
-    network: linea
+    network: {{network}}
     source:
-      address: '0xacA92E438df0B2401fF60dA7E4337B687a2435DA' # mUSD
-      startBlock: 21952038
+      address: "{{stablecoinAddress}}"
       abi: Stablecoin
+      startBlock: {{stablecoinStartBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9

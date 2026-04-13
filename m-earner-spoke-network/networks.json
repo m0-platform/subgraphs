@@ -1,12 +1,19 @@
 {
-  "mainnet": {
-    "MToken": {
-      "address": "0x866A2BF4E572CbcF37D5071A7a58503Bfb36be1b",
-      "startBlock": 19818438
-    },
-    "Registrar": {
-      "address": "0x119FbeeDD4F4f4298Fb59B720d5654442b81ae2c",
-      "startBlock": 19818438
-    }
+  "//": "Check supported networks in https://docs.goldsky.com/subgraphs/blocks-subgraphs#supported-networks",
+  "m-token-linea": {
+    "name": "M on Linea (tracking mUSD yield)",
+    "network": "linea",
+    "mTokenStartBlock": 21511394,
+    "stablecoinAddress": "0xacA92E438df0B2401fF60dA7E4337B687a2435DA",
+    "stablecoinStartBlock": 21952038,
+    "version": "0.1.0"
+  },
+  "m-token-hyperevm": {
+    "name": "M on Hyperliquid (tracking USDhl yield)",
+    "network": "hyperevm",
+    "mTokenStartBlock": 4107927,
+    "stablecoinAddress": "0xb50A96253aBDF803D85efcDce07Ad8becBc52BD5",
+    "stablecoinStartBlock": 4714837,
+    "version": "0.1.0"
   }
 }
