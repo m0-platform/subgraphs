@@ -1,14 +1,20 @@
 #!/bin/bash
 set -e  # stop if any command fails
 
-if [ -z "$1" ]; then
-  echo "Usage: $0 <version>"
+# Check for dependencies: jq and goldsky
+if ! command -v jq &> /dev/null; then
+  echo "jq is required. Please install it."
+  echo "e.g., 'brew install jq'"
+  exit 1
+fi
+if ! command -v goldsky &> /dev/null; then
+  echo "goldsky is required. Please install it."
+  echo "e.g., 'npm install -g @goldskycom/cli'"
   exit 1
 fi
 
-if [ -z "$ALCHEMY_DEPLOY_KEY" ]; then
-  echo "Error: ALCHEMY_DEPLOY_KEY environment variable not set."
-  echo "Set it with: export ALCHEMY_DEPLOY_KEY=your_key_here"
+if [ -z "$1" ]; then
+  echo "Missing arguments. <version>"
   exit 1
 fi
 
@@ -21,11 +27,7 @@ echo "👷‍♀️ Building subgraph..."
 yarn codegen
 yarn build
 
-echo "🚀 Deploying subgraph with version: $VERSION"
-yarn graph deploy m-token-mainnet \
-  --version-label "$VERSION" \
-  --node https://subgraphs.alchemy.com/api/subgraphs/deploy \
-  --deploy-key "$ALCHEMY_DEPLOY_KEY" \
-  --ipfs https://ipfs.satsuma.xyz
+echo "🚀 Deploying subgraph..."
+goldsky subgraph deploy m-token-mainnet/"$VERSION" --path .
 
 echo "✅ Deployment complete"

@@ -14,8 +14,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.88.0",
-    "@graphprotocol/graph-ts": "^0.35.1",
+    "@graphprotocol/graph-cli": "^0.98.1",
+    "@graphprotocol/graph-ts": "^0.38.2",
     "dotenv": "^16.4.5",
     "prettier": "^3.3.3"
   },

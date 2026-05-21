@@ -34,6 +34,8 @@ const EXP_SCALED_ONE = BigInt.fromI32(10).pow(12);
 const BPS_SCALED_ONE = BigInt.fromI32(10).pow(4);
 const SECONDS_PER_YEAR = BigInt.fromI32(31_536_000);
 
+const TIMESERIES_ID = 1;
+
 /* ============ Handlers ============ */
 
 export function handleKeySet(event: KeySetEvent): void {
@@ -292,49 +294,28 @@ function updatePrincipalOfTotalEarningSupplySnapshot(timestamp: Timestamp, value
 }
 
 function updateLatestIndexSnapshot(timestamp: Timestamp, value: BigInt): void {
-    const id = `latestIndex-${timestamp.toString()}`;
+    let snapshot = new LatestIndexSnapshot(TIMESERIES_ID);
 
-    let snapshot = LatestIndexSnapshot.load(id);
-
-    if (!snapshot) {
-        snapshot = new LatestIndexSnapshot(id);
-
-        snapshot.timestamp = timestamp;
-    }
-
+    snapshot.timestamp = timestamp;
     snapshot.value = value;
 
     snapshot.save();
 }
 
 function updateLatestRateSnapshot(timestamp: Timestamp, value: BigInt): void {
-    const id = `latestRate-${timestamp.toString()}`;
+    let snapshot = new LatestRateSnapshot(TIMESERIES_ID);
 
-    let snapshot = LatestRateSnapshot.load(id);
-
-    if (!snapshot) {
-        snapshot = new LatestRateSnapshot(id);
-
-        snapshot.timestamp = timestamp;
-    }
-
+    snapshot.timestamp = timestamp;
     snapshot.value = value;
 
     snapshot.save();
 }
 
 function updateLatestUpdateTimestampSnapshot(timestamp: Timestamp, value: Timestamp): void {
-    const id = `latestUpdateTimestamp-${timestamp.toString()}`;
+    let snapshot = new LatestUpdateTimestampSnapshot(TIMESERIES_ID);
 
-    let snapshot = LatestUpdateTimestampSnapshot.load(id);
-
-    if (!snapshot) {
-        snapshot = new LatestUpdateTimestampSnapshot(id);
-
-        snapshot.timestamp = timestamp;
-    }
-
-    snapshot.value = value;
+    snapshot.timestamp = timestamp;
+    snapshot.value = i32(value);
 
     snapshot.save();
 }

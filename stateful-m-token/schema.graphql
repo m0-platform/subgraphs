@@ -33,42 +33,42 @@ interface StringSnapshotEntity implements SnapshotEntity {
     value: String!
 }
 
-type EarningPrincipalSnapshot implements HolderSnapshotEntity & BigIntSnapshotEntity & SnapshotEntity @entity {
+type EarningPrincipalSnapshot implements HolderSnapshotEntity & BigIntSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp!
     account: Holder!
     value: BigInt!
 }
 
-type NonEarningBalanceSnapshot implements HolderSnapshotEntity & BigIntSnapshotEntity & SnapshotEntity @entity {
+type NonEarningBalanceSnapshot implements HolderSnapshotEntity & BigIntSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp!
     account: Holder!
     value: BigInt!
 }
 
-type IsEarningSnapshot implements HolderSnapshotEntity & BooleanSnapshotEntity & SnapshotEntity @entity {
+type IsEarningSnapshot implements HolderSnapshotEntity & BooleanSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp!
     account: Holder!
     value: Boolean!
 }
 
-type ReceivedSnapshot implements HolderSnapshotEntity & BigIntSnapshotEntity & SnapshotEntity @entity {
+type ReceivedSnapshot implements HolderSnapshotEntity & BigIntSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp!
     account: Holder!
     value: BigInt!
 }
 
-type SentSnapshot implements HolderSnapshotEntity & BigIntSnapshotEntity & SnapshotEntity @entity {
+type SentSnapshot implements HolderSnapshotEntity & BigIntSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp!
     account: Holder!
     value: BigInt!
 }
 
-type Holder @entity {
+type Holder @entity(immutable: false) {
     id: ID! @unique
     address: String! @unique
     earningPrincipal: BigInt!
@@ -86,55 +86,79 @@ type Holder @entity {
     lastUpdate: Timestamp!
 }
 
-type TotalNonEarningSupplySnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity {
+type TotalNonEarningSupplySnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp! @unique
     value: BigInt!
 }
 
-type PrincipalOfTotalEarningSupplySnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity {
+type PrincipalOfTotalEarningSupplySnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp! @unique
     value: BigInt!
 }
 
-type LatestIndexSnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity {
+type LatestIndexSnapshot @entity(timeseries: true) {
+    id: Int8!
+    timestamp: Timestamp! @unique
+    value: BigInt!
+}
+
+type LatestIndex
+    @aggregation(intervals: ["hour", "day"], source: "LatestIndexSnapshot") {
+    id: Int8!
+    timestamp: Timestamp!
+    value: BigInt! @aggregate(fn: "last", arg: "value")
+    count: Int8! @aggregate(fn: "count", cumulative: true)
+}
+
+type LatestRateSnapshot @entity(timeseries: true) {
+    id: Int8!
+    timestamp: Timestamp! @unique
+    value: BigInt!
+}
+
+type LatestRate
+    @aggregation(intervals: ["hour", "day"], source: "LatestRateSnapshot") {
+    id: Int8!
+    timestamp: Timestamp!
+    value: BigInt! @aggregate(fn: "last", arg: "value")
+    count: Int8! @aggregate(fn: "count", cumulative: true)
+}
+
+type LatestUpdateTimestampSnapshot @entity(timeseries: true) {
+    id: Int8!
+    timestamp: Timestamp! @unique
+    value: Int!
+}
+
+type LatestUpdateTimestamp
+    @aggregation(intervals: ["hour", "day"], source: "LatestUpdateTimestampSnapshot") {
+    id: Int8!
+    timestamp: Timestamp!
+    value: Int! @aggregate(fn: "last", arg: "value")
+    count: Int8! @aggregate(fn: "count", cumulative: true)
+}
+
+type TotalMintedSnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp! @unique
     value: BigInt!
 }
 
-type LatestRateSnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity {
+type TotalBurnedSnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp! @unique
     value: BigInt!
 }
 
-type LatestUpdateTimestampSnapshot implements TimestampSnapshotEntity & SnapshotEntity @entity {
-    id: ID! @unique
-    timestamp: Timestamp! @unique
-    value: Timestamp!
-}
-
-type TotalMintedSnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity {
-    id: ID! @unique
-    timestamp: Timestamp! @unique
-    value: BigInt!
-}
-
-type TotalBurnedSnapshot implements BigIntSnapshotEntity & SnapshotEntity @entity {
-    id: ID! @unique
-    timestamp: Timestamp! @unique
-    value: BigInt!
-}
-
-type RateModelSnapshot implements StringSnapshotEntity & SnapshotEntity @entity {
+type RateModelSnapshot implements StringSnapshotEntity & SnapshotEntity @entity(immutable: false) {
     id: ID! @unique
     timestamp: Timestamp! @unique
     value: String!
 }
 
-type MToken @entity {
+type MToken @entity(immutable: false) {
     id: ID! @unique
     holders: [Holder!]
     totalNonEarningSupply: BigInt!
