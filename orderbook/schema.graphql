@@ -1,0 +1,189 @@
+# =============================================================================
+# Core Entities (Mutable)
+# =============================================================================
+
+enum OrderStatus {
+    CREATED
+    PARTIALLY_FILLED
+    COMPLETED
+    CANCELLED
+}
+
+type Order @entity(immutable: false) {
+    id: Bytes! # orderId (bytes32)
+    sender: Bytes # Address that created order (null on dest chain until fill reported)
+    originChainId: Int!
+    destChainId: Int!
+    tokenIn: Bytes
+    tokenOut: Bytes
+    amountIn: BigInt
+    amountOut: BigInt
+    amountInReleased: BigInt! # Released to solvers
+    amountInRefunded: BigInt! # Refunded to sender
+    amountOutFilled: BigInt! # Filled by solvers
+    status: OrderStatus!
+    isLocalOrder: Boolean! # origin == destination
+    createdAt: BigInt
+    completedAt: BigInt
+    solver: Bytes # Designated solver (null = any)
+    recipient: Bytes
+    fills: [Fill!]! @derivedFrom(field: "order")
+    refunds: [Refund!]! @derivedFrom(field: "order")
+}
+
+type Solver @entity(immutable: false) {
+    id: Bytes! # solver address
+    totalFills: Int!
+    totalVolumeOut: BigInt!
+    totalVolumeIn: BigInt!
+    fills: [Fill!]! @derivedFrom(field: "solver")
+}
+
+type Token @entity(immutable: false) {
+    id: Bytes! # token address/bytes32
+    totalVolumeIn: BigInt! # As input token
+    totalVolumeOut: BigInt! # As output token
+    netFlow: BigInt! # volumeIn - volumeOut
+    orderCountAsInput: Int!
+    orderCountAsOutput: Int!
+}
+
+type ChainRoute @entity(immutable: false) {
+    id: String! # "{originChainId}-{destChainId}"
+    originChainId: Int!
+    destChainId: Int!
+    totalOrders: Int!
+    totalVolumeIn: BigInt!
+    totalVolumeOut: BigInt!
+}
+
+type DestinationSupport @entity(immutable: false) {
+    id: String! # destChainId as string
+    destChainId: Int!
+    isSupported: Boolean!
+    updatedAt: BigInt!
+}
+
+# =============================================================================
+# Immutable Event Records
+# =============================================================================
+
+type Fill @entity(immutable: true) {
+    id: Bytes! # txHash + logIndex
+    order: Order!
+    orderId: Bytes!
+    solver: Solver!
+    solverAddress: Bytes!
+    amountInToRelease: BigInt!
+    amountOutFilled: BigInt!
+    messageId: Bytes # null for same-chain fills
+    isPartialFill: Boolean!
+    timestamp: BigInt!
+    blockNumber: BigInt!
+    transactionHash: Bytes!
+}
+
+type Refund @entity(immutable: true) {
+    id: Bytes! # txHash + logIndex
+    order: Order!
+    orderId: Bytes!
+    sender: Bytes!
+    amountInRefunded: BigInt!
+    timestamp: BigInt!
+    blockNumber: BigInt!
+    transactionHash: Bytes!
+}
+
+type Cancellation @entity(immutable: true) {
+    id: Bytes! # txHash + logIndex
+    orderId: Bytes!
+    messageId: Bytes
+    timestamp: BigInt!
+    blockNumber: BigInt!
+    transactionHash: Bytes!
+}
+
+# =============================================================================
+# Timeseries for Aggregations
+# =============================================================================
+
+type FillSnapshot @entity(timeseries: true) {
+    id: Int8!
+    timestamp: Timestamp!
+    orderId: Bytes!
+    solver: Bytes!
+    amountInReleased: BigInt!
+    amountOutFilled: BigInt!
+    tokenIn: Bytes!
+    tokenOut: Bytes!
+    originChainId: Int!
+    destChainId: Int!
+    blockNumber: BigInt!
+    transactionHash: Bytes!
+    logIndex: BigInt!
+}
+
+type VolumeStats @aggregation(intervals: ["hour", "day"], source: "FillSnapshot") {
+    id: Int8!
+    timestamp: Timestamp!
+    totalVolumeIn: BigInt! @aggregate(fn: "sum", arg: "amountInReleased")
+    totalVolumeOut: BigInt! @aggregate(fn: "sum", arg: "amountOutFilled")
+    fillCount: Int8! @aggregate(fn: "count", cumulative: true)
+}
+
+type OrderSnapshot @entity(timeseries: true) {
+    id: Int8!
+    timestamp: Timestamp!
+    orderId: Bytes!
+    sender: Bytes!
+    tokenIn: Bytes!
+    tokenOut: Bytes!
+    amountIn: BigInt!
+    amountOut: BigInt!
+    originChainId: Int!
+    destChainId: Int!
+    blockNumber: BigInt!
+    transactionHash: Bytes!
+    logIndex: BigInt!
+}
+
+type OrderStats @aggregation(intervals: ["hour", "day"], source: "OrderSnapshot") {
+    id: Int8!
+    timestamp: Timestamp!
+    totalVolumeIn: BigInt! @aggregate(fn: "sum", arg: "amountIn")
+    totalVolumeOut: BigInt! @aggregate(fn: "sum", arg: "amountOut")
+    orderCount: Int8! @aggregate(fn: "count", cumulative: true)
+}
+
+type CancellationSnapshot @entity(timeseries: true) {
+    id: Int8!
+    timestamp: Timestamp!
+    orderId: Bytes!
+    blockNumber: BigInt!
+    transactionHash: Bytes!
+    logIndex: BigInt!
+}
+
+type CancellationStats @aggregation(intervals: ["hour", "day"], source: "CancellationSnapshot") {
+    id: Int8!
+    timestamp: Timestamp!
+    cancelCount: Int8! @aggregate(fn: "count", cumulative: true)
+}
+
+type RefundSnapshot @entity(timeseries: true) {
+    id: Int8!
+    timestamp: Timestamp!
+    orderId: Bytes!
+    sender: Bytes!
+    amountInRefunded: BigInt!
+    blockNumber: BigInt!
+    transactionHash: Bytes!
+    logIndex: BigInt!
+}
+
+type RefundStats @aggregation(intervals: ["hour", "day"], source: "RefundSnapshot") {
+    id: Int8!
+    timestamp: Timestamp!
+    totalRefunded: BigInt! @aggregate(fn: "sum", arg: "amountInRefunded")
+    refundCount: Int8! @aggregate(fn: "count", cumulative: true)
+}

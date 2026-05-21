@@ -1,0 +1,59 @@
+specVersion: 1.2.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: OrderBook
+    network: {{network}}
+    context:
+      chainId:
+        type: Int
+        data: {{chainId}}
+    source:
+      address: "{{address}}"
+      abi: OrderBook
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Order
+        - Solver
+        - Token
+        - ChainRoute
+        - DestinationSupport
+        - Fill
+        - Refund
+        - Cancellation
+        - FillSnapshot
+        - VolumeStats
+        - OrderSnapshot
+        - OrderStats
+        - CancellationSnapshot
+        - CancellationStats
+        - RefundSnapshot
+        - RefundStats
+      abis:
+        - name: OrderBook
+          file: ./abis/OrderBook.json
+      eventHandlers:
+        - event: OrderOpened(bytes32,indexed address,address,uint128,indexed uint32,bytes32,uint128,indexed bytes32)
+          handler: handleOrderOpened
+        - event: OrderFilled(indexed bytes32,indexed address,uint128,uint128,indexed bytes32)
+          handler: handleOrderFilled
+        - event: OrderCompleted(bytes32)
+          handler: handleOrderCompleted
+        - event: OrderCancelled(indexed bytes32,indexed bytes32)
+          handler: handleOrderCancelled
+        - event: FillReported(indexed bytes32,indexed address,uint128,uint128)
+          handler: handleFillReported
+        - event: CancelReported(indexed bytes32)
+          handler: handleCancelReported
+        - event: RefundClaimed(indexed bytes32,indexed address,uint128)
+          handler: handleRefundClaimed
+        - event: DestinationSupportUpdated(indexed uint32,bool)
+          handler: handleDestinationSupportUpdated
+      file: ./src/main.ts

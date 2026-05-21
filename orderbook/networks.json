@@ -1,0 +1,51 @@
+{
+  "//": "Check supported networks in https://docs.goldsky.com/subgraphs/blocks-subgraphs#supported-networks",
+  "orderbook-sepolia": {
+    "name": "OrderBook Sepolia",
+    "network": "sepolia",
+    "chainId": 11155111,
+    "address": "0x0000000000000000000000000000000000000000",
+    "startBlock": 0,
+    "version": "0.1.0"
+  },
+  "orderbook-base-sepolia": {
+    "name": "OrderBook Base Sepolia",
+    "network": "base-sepolia",
+    "chainId": 84532,
+    "address": "0x0000000000000000000000000000000000000000",
+    "startBlock": 0,
+    "version": "0.1.0"
+  },
+  "orderbook-arbitrum-sepolia": {
+    "name": "OrderBook Arbitrum Sepolia",
+    "network": "arbitrum-sepolia",
+    "chainId": 421614,
+    "address": "0x0000000000000000000000000000000000000000",
+    "startBlock": 0,
+    "version": "0.1.0"
+  },
+  "orderbook-mainnet": {
+    "name": "OrderBook Mainnet",
+    "network": "mainnet",
+    "chainId": 1,
+    "address": "0x0000000000000000000000000000000000000000",
+    "startBlock": 0,
+    "version": "0.1.0"
+  },
+  "orderbook-base": {
+    "name": "OrderBook Base",
+    "network": "base",
+    "chainId": 8453,
+    "address": "0x0000000000000000000000000000000000000000",
+    "startBlock": 0,
+    "version": "0.1.0"
+  },
+  "orderbook-arbitrum": {
+    "name": "OrderBook Arbitrum",
+    "network": "arbitrum-one",
+    "chainId": 42161,
+    "address": "0x0000000000000000000000000000000000000000",
+    "startBlock": 0,
+    "version": "0.1.0"
+  }
+}
