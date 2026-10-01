@@ -1,0 +1,12 @@
+# Reviewed false alarms. Each line is file:rule:start-line.
+# A new secret on a different line still fails the scan.
+orderbook/tests/entities.test.ts:evm-32-byte-hex:7
+orderbook/tests/entities.test.ts:evm-32-byte-hex:28
+orderbook/tests/entities.test.ts:evm-32-byte-hex:40
+orderbook/tests/order-cancelled.test.ts:evm-32-byte-hex:1
+orderbook/tests/order-cancelled.test.ts:evm-32-byte-hex:6
+orderbook/tests/order-filled.test.ts:evm-32-byte-hex:4
+orderbook/tests/order-filled.test.ts:evm-32-byte-hex:9
+orderbook/tests/order-opened.test.ts:evm-32-byte-hex:7
+orderbook/tests/order-opened.test.ts:evm-32-byte-hex:11
+orderbook/tests/refund-claimed.test.ts:evm-32-byte-hex:3
